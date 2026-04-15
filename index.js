@@ -1,10 +1,12 @@
 import express from "express";
 import "dotenv/config";
+import swaggerUi from "swagger-ui-express";
 import sequelize from "./src/config/db.js";
 import { formatDatabaseConnectionError } from "./src/config/db.js";
 import "./src/database/index.js";
 import routes from "./src/routes/index.js";
 import { attachActor } from "./src/middleware/auth.js";
+import swaggerDocument from "./src/docs/swagger.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,6 +17,12 @@ app.use(attachActor);
 app.get("/", (req, res) => {
   res.json({ message: "SOS API is running" });
 });
+
+app.get("/api-docs.json", (req, res) => {
+  res.json(swaggerDocument);
+});
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use("/api", routes);
 
